@@ -8,6 +8,7 @@ PaddleOCR 2.8.1 + PaddlePaddle 2.6.2，PP-OCRv4 模型，CPU 运行。
 API:
     POST /ocr         单图 base64
     POST /ocr-batch   批量 URL
+    POST /ocr-pdf     PDF base64（逐页识别）
     GET  /health      健康检查
 """
 
@@ -16,6 +17,7 @@ import io
 import time
 import traceback
 import numpy as np
+import fitz  # PyMuPDF，处理 PDF
 import requests as http_requests
 from PIL import Image
 from flask import Flask, request, jsonify
@@ -89,6 +91,26 @@ def _download_image(url, docker_host="http://localhost"):
     if resp.status_code != 200:
         raise Exception(f"下载失败 HTTP {resp.status_code}")
     return Image.open(io.BytesIO(resp.content)).convert("RGB")
+
+
+def _pdf_to_images(pdf_bytes, dpi=200):
+    """PDF 字节流 → 每页渲染为 PIL Image 列表"""
+    images = []
+    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+    zoom = dpi / 72  # PDF 默认 72 DPI
+    mat = fitz.Matrix(zoom, zoom)
+
+    total = len(doc)
+
+    for page_num in range(total):
+        page = doc[page_num]
+        pix = page.get_pixmap(matrix=mat)
+        img = Image.open(io.BytesIO(pix.tobytes("png"))).convert("RGB")
+        images.append(img)
+
+    doc.close()
+    print(f"[pdf] {total} 页渲染完成 (DPI={dpi})")
+    return images
 
 
 # ---- 路由 ----
@@ -188,6 +210,56 @@ def ocr_batch():
         return jsonify({
             "success": True, "results": results,
             "total": len(results), "elapsed_seconds": total_elapsed,
+        })
+
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/ocr-pdf", methods=["POST"])
+def ocr_pdf():
+    """PDF base64 逐页识别"""
+    try:
+        data = request.get_json(silent=True)
+        if not data:
+            return jsonify({"success": False, "error": "请求体必须为 JSON"}), 400
+
+        pdf_b64 = data.get("pdf", "")
+        if not pdf_b64:
+            return jsonify({"success": False, "error": "缺少 pdf 字段"}), 400
+
+        if "," in pdf_b64 and pdf_b64.startswith("data:"):
+            pdf_b64 = pdf_b64.split(",", 1)[1]
+
+        pdf_bytes = base64.b64decode(pdf_b64)
+
+        # 可调 DPI，默认 200（文字清晰，速度适中）
+        dpi = data.get("dpi", 200)
+        page_images = _pdf_to_images(pdf_bytes, dpi=dpi)
+
+        pages = []
+        _total_start = time.time()
+
+        for i, img in enumerate(page_images):
+            full_text, blocks, elapsed = _do_ocr(img)
+            pages.append({
+                "page": i + 1,
+                "full_text": full_text,
+                "blocks": blocks,
+                "total_blocks": len(blocks),
+                "elapsed_seconds": elapsed,
+            })
+            print(f"[ocr-pdf] 第{i+1}/{len(page_images)}页, {len(blocks)}块, {elapsed}s")
+
+        total_elapsed = round(time.time() - _total_start, 2)
+        print(f"[ocr-pdf] 完成: {len(pages)}页, 总耗时 {total_elapsed}s")
+
+        return jsonify({
+            "success": True,
+            "pages": pages,
+            "total_pages": len(pages),
+            "elapsed_seconds": total_elapsed,
         })
 
     except Exception as e:

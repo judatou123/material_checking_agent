@@ -67,9 +67,9 @@
 
       <div class="input-row">
         <!-- 上传按钮 -->
-        <label class="upload-btn" title="上传档案材料图片">
+        <label class="upload-btn" title="上传档案材料图片或 PDF">
           📎
-          <input type="file" accept="image/*" multiple hidden
+          <input type="file" accept="image/*,.pdf" multiple hidden
             @change="onFileChange" />
         </label>
 
@@ -165,14 +165,31 @@ const placeholder = computed(() => {
 })
 
 // ---- 文件处理 ----
+function isPdfFile(f) {
+  return f.type === 'application/pdf' || (f.name && f.name.toLowerCase().endsWith('.pdf'))
+}
+
+// 生成红色 PDF 图标（内联 SVG data URL）
+function pdfIconDataUrl() {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+    <rect fill="#e74c3c" width="64" height="64" rx="8"/>
+    <text fill="white" font-size="13" font-weight="bold" x="32" y="38" text-anchor="middle" font-family="Arial">PDF</text>
+  </svg>`
+  return 'data:image/svg+xml,' + encodeURIComponent(svg)
+}
+
 function onFileChange(e) {
   const newFiles = Array.from(e.target.files)
-  files.value = [...files.value, ...newFiles].slice(0, 10) // 最多10张
+  files.value = [...files.value, ...newFiles].slice(0, 10) // 最多10个
   previews.value = []
   files.value.forEach(f => {
-    const reader = new FileReader()
-    reader.onload = ev => previews.value.push(ev.target.result)
-    reader.readAsDataURL(f)
+    if (isPdfFile(f)) {
+      previews.value.push(pdfIconDataUrl())
+    } else {
+      const reader = new FileReader()
+      reader.onload = ev => previews.value.push(ev.target.result)
+      reader.readAsDataURL(f)
+    }
   })
   // 重置 input 值，否则再次选择相同文件不会触发 change
   e.target.value = ''

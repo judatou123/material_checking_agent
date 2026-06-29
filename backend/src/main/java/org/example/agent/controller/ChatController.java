@@ -29,6 +29,7 @@ public class ChatController {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private static final String OCR_URL = "http://localhost:8866/ocr";
+    private static final String OCR_PDF_URL = "http://localhost:8866/ocr-pdf";
     private static final long SSE_TIMEOUT = 300000L; // 5 分钟
 
     @PostMapping(value = "/chat", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -68,7 +69,7 @@ public class ChatController {
     }
 
     /**
-     * 同步 OCR（保持原有逻辑，速度快不需要流式）
+     * 同步 OCR（支持图片和 PDF，按文件类型路由到不同 PaddleOCR 端点）
      */
     private String runOcrSync(List<MultipartFile> files) throws Exception {
         if (files == null || files.isEmpty()) return "";
@@ -77,32 +78,86 @@ public class ChatController {
         for (MultipartFile file : files) {
             if (file.isEmpty()) continue;
             try {
-                String base64 = Base64.getEncoder().encodeToString(file.getBytes());
-                String reqBody = "{\"image\":\"" + base64 + "\"}";
-
-                HttpURLConnection conn = (HttpURLConnection) URI.create(OCR_URL).toURL().openConnection();
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setDoOutput(true);
-                conn.setConnectTimeout(10000);
-                conn.setReadTimeout(120000);
-
-                try (OutputStream os = conn.getOutputStream()) {
-                    os.write(reqBody.getBytes(StandardCharsets.UTF_8));
+                if (isPdf(file)) {
+                    sb.append(ocrPdf(file));
+                } else {
+                    sb.append(ocrImage(file));
                 }
-
-                String resp = new String(conn.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-                conn.disconnect();
-
-                Map<String, Object> result = objectMapper.readValue(resp, new TypeReference<>() {});
-                String text = (String) result.getOrDefault("full_text", "");
-                sb.append("【").append(file.getOriginalFilename()).append("】\n").append(text).append("\n\n");
-
             } catch (Exception e) {
                 log.error("OCR failed: {}", file.getOriginalFilename(), e);
                 sb.append("【").append(file.getOriginalFilename()).append("】\n[识别失败]\n\n");
             }
         }
+        return sb.toString();
+    }
+
+    /** 判断文件是否为 PDF */
+    private boolean isPdf(MultipartFile file) {
+        String contentType = file.getContentType();
+        if ("application/pdf".equals(contentType)) return true;
+        String name = file.getOriginalFilename();
+        return name != null && name.toLowerCase().endsWith(".pdf");
+    }
+
+    /** 图片 OCR：POST /ocr */
+    private String ocrImage(MultipartFile file) throws Exception {
+        String base64 = Base64.getEncoder().encodeToString(file.getBytes());
+        String reqBody = "{\"image\":\"" + base64 + "\"}";
+
+        HttpURLConnection conn = (HttpURLConnection) URI.create(OCR_URL).toURL().openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setDoOutput(true);
+        conn.setConnectTimeout(10000);
+        conn.setReadTimeout(120000);
+
+        try (OutputStream os = conn.getOutputStream()) {
+            os.write(reqBody.getBytes(StandardCharsets.UTF_8));
+        }
+
+        String resp = new String(conn.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        conn.disconnect();
+
+        Map<String, Object> result = objectMapper.readValue(resp, new TypeReference<>() {});
+        String text = (String) result.getOrDefault("full_text", "");
+        return "【" + file.getOriginalFilename() + "】\n" + text + "\n\n";
+    }
+
+    /** PDF OCR：POST /ocr-pdf，按页聚合结果 */
+    private String ocrPdf(MultipartFile file) throws Exception {
+        String base64 = Base64.getEncoder().encodeToString(file.getBytes());
+        String reqBody = "{\"pdf\":\"" + base64 + "\", \"dpi\": 200}";
+
+        HttpURLConnection conn = (HttpURLConnection) URI.create(OCR_PDF_URL).toURL().openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setDoOutput(true);
+        conn.setConnectTimeout(10000);
+        conn.setReadTimeout(300000); // PDF 多页可能较慢
+
+        try (OutputStream os = conn.getOutputStream()) {
+            os.write(reqBody.getBytes(StandardCharsets.UTF_8));
+        }
+
+        String resp = new String(conn.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        conn.disconnect();
+
+        Map<String, Object> result = objectMapper.readValue(resp, new TypeReference<>() {});
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("【").append(file.getOriginalFilename()).append("】\n");
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> pages = (List<Map<String, Object>>) result.get("pages");
+        if (pages != null) {
+            for (Map<String, Object> page : pages) {
+                int pageNum = (int) page.getOrDefault("page", 0);
+                String text = (String) page.getOrDefault("full_text", "");
+                sb.append("--- 第").append(pageNum).append("页 ---\n");
+                sb.append(text).append("\n");
+            }
+        }
+        sb.append("\n");
         return sb.toString();
     }
 

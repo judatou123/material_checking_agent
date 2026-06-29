@@ -1,31 +1,30 @@
-┌─────────────────────────────────────────────────────────────────────────┐
-│                            前端 (Vue3)                                    │
-│  ChatAssistant.vue                                                        │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                           │
-│  ① 用户选择文件                                                           │
-│     <input type="file" accept="image/*,.pdf" multiple />                  │
-│                                                                           │
-│  ② onFileChange(e)                                                        │
-│     ├─ 图片 → FileReader.readAsDataURL() → previews 存 base64 缩略图      │
-│     └─ PDF  → pdfIconDataUrl()          → previews 存 SVG 红色图标        │
-│     files.value = [File, File, ...]  ← 原始 File 对象，最多10个           │
-│                                                                           │
-│  ③ 用户点击发送 sendMessage()                                              │
-│     formData = new FormData()                                             │
-│     ├─ formData.append('question', '...')     ← 文字（可选）              │
-│     └─ formData.append('files', file)         ← 原始 File，逐个 append    │
-│                                                                           │
-│  ④ fetch('/api/material-entry', { method:'POST', body: formData })        │
-│     ↑ multipart/form-data，文件以二进制流传输                              │
-└─────────────────────────────────────────────────────────────────────────┘
+
+                            前端 (Vue3)                                    
+  ChatAssistant.vue                                                        
+
+                                                                           
+  ① 用户选择文件                                                          
+     <input type="file" accept="image/*,.pdf" multiple />                  
+                                                                           
+  ② onFileChange(e)                                                        
+     ├─ 图片 → FileReader.readAsDataURL() → previews 存 base64 缩略图      
+     └─ PDF  → pdfIconDataUrl()          → previews 存 SVG 红色图标        
+     files.value = [File, File, ...]  ← 原始 File 对象，最多10个           
+                                                                           
+  ③ 用户点击发送 sendMessage()                                              
+     formData = new FormData()                                                  ├─ formData.append('question', '...')     ← 文字（可选）             
+     └─ formData.append('files', file)         ← 原始 File，逐个 append    
+                                                                           
+  ④ fetch('/api/material-entry', { method:'POST', body: formData })        
+     ↑ multipart/form-data，文件以二进制流传输                              
+
                                     │
                                     ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         后端 (Spring Boot :8088)                           │
-│  ChatController.java                                                       │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                           │
+
+                         后端 (Spring Boot :8088)                           
+  ChatController.java                                                       
+
+│                                                                           
 │  ⑤ @PostMapping("/api/material-entry")                                   │
 │     materialEntry(@RequestParam question,                                  │
 │                   @RequestParam List<MultipartFile> files)                 │

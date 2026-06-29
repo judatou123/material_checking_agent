@@ -1,0 +1,21 @@
+# 前端依赖
+frontend/node_modules/
+dify/node_modules/
+backend/node_modules/
+orc/node_modules/
+
+# Python虚拟环境
+**/paddle2_env/
+**/venv/
+**/.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 其他常见忽略
+.env
+.env.local
+dist/
+build/
+*.log

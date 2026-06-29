@@ -1,0 +1,857 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  icon_type: emoji
+  mode: workflow
+  name: material_checking_agent
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/deepseek:0.0.17@f7a5c1d222d17ee419b17a80d6e4923838fe93788dc724a3af73fbc6990b3a32
+    version: null
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/tongyi:0.1.45@7f2b2d5b163de4c1ad8fad80e624c08d47ed7942a6a534e88e5786e65073f3ca
+    version: null
+kind: app
+version: 0.6.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 20
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: llm
+      id: 1782467008981-source-1782467490725-target
+      selected: false
+      source: '1782467008981'
+      sourceHandle: source
+      target: '1782467490725'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 1782468636243-source-1782468735555-target
+      selected: false
+      source: '1782468636243'
+      sourceHandle: source
+      target: '1782468735555'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: end
+      id: 1782468735555-source-1782468875820-target
+      selected: false
+      source: '1782468735555'
+      sourceHandle: source
+      target: '1782468875820'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: 1782467490725-source-1782468636243-target
+      selected: false
+      source: '1782467490725'
+      sourceHandle: source
+      target: '1782468636243'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: 1782466874781-source-17826487202500-target
+      source: '1782466874781'
+      sourceHandle: source
+      target: '17826487202500'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: if-else
+      id: 17826487202500-source-17826487290260-target
+      source: '17826487202500'
+      sourceHandle: source
+      target: '17826487290260'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 17826487290260-true-1782467008981-target
+      source: '17826487290260'
+      sourceHandle: 'true'
+      target: '1782467008981'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: end
+      id: 17826487290260-db4f0a84-795a-490d-92d0-c1f38e9953e4-1782648962817-target
+      source: '17826487290260'
+      sourceHandle: db4f0a84-795a-490d-92d0-c1f38e9953e4
+      target: '1782648962817'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: code
+      id: 17826487290260-false-17826490256770-target
+      source: '17826487290260'
+      sourceHandle: 'false'
+      target: '17826490256770'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 17826490256770-source-17826490351930-target
+      source: '17826490256770'
+      sourceHandle: source
+      target: '17826490351930'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 17826490351930-source-17826490439520-target
+      source: '17826490351930'
+      sourceHandle: source
+      target: '17826490439520'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 17826490439520-source-1782649057449-target
+      source: '17826490439520'
+      sourceHandle: source
+      target: '1782649057449'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: true
+        title: 用户输入
+        type: start
+        variables:
+        - default: ''
+          hint: ''
+          label: ocr_text
+          options: []
+          placeholder: ''
+          required: true
+          type: paragraph
+          variable: ocr_text
+        - default: ''
+          hint: ''
+          label: user_question
+          options: []
+          placeholder: ''
+          required: false
+          type: text-input
+          variable: user_question
+      height: 133
+      id: '1782466874781'
+      position:
+        x: -26.99999889482939
+        y: 298.9999998244122
+      positionAbsolute:
+        x: -26.99999889482939
+        y: 298.9999998244122
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1782466874781'
+          - ocr_text
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: qwen3.6-plus
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: a40fb08b-3dfd-44ef-b1b4-0c4a64e4775b
+          role: system
+          text: '你是一名干部人事档案管理专家。请根据以下材料内容，判断它属于哪种类型的档案材料。
+
+
+
+            请从以下选项中选择唯一一个最匹配的类型：
+
+            - 履历表：包含个人基本信息、学习经历、工作经历等完整履历
+
+            - 任免表：包含职务任免信息、发文单位、任免时间
+
+            - 考核表：包含考核年度、考核等次、评语
+
+            - 学历材料：包含毕业院校、专业、学历学位
+
+            - 奖惩材料：包含奖励/处分名称、颁发单位、时间
+
+            - 政审材料：包含政治审查内容、家庭成员信息
+
+            - 其他
+
+
+
+            输出要求：
+
+            - 只输出类型名称（如"履历表"），不要输出任何其他文字
+
+            - 不要解释，不要加标点'
+        - id: a601c421-681a-4b49-a61f-ca658e414457
+          role: user
+          text: '{{#context#}}'
+        selected: false
+        title: LLM-Material_Classifier
+        type: llm
+        vision:
+          enabled: false
+      height: 86
+      id: '1782467008981'
+      position:
+        x: 343.510004692509
+        y: 312.7584867929258
+      positionAbsolute:
+        x: 343.510004692509
+        y: 312.7584867929258
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1782466874781'
+          - ocr_text
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: qwen3.6-plus
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: 058e0afe-986c-435c-8ed5-72a44d899399
+          role: system
+          text: '
+
+            你是一名干部人事档案审核专家。请从以下材料中提取关键信息，严格按照 JSON 格式输出。
+
+
+
+            需要提取的字段及说明：
+
+            1. name: 干部姓名（中文全名）
+
+            2. id_card: 身份证号码（18位，若材料中有）
+
+            3. birth_date: 出生日期（格式：YYYY-MM-DD）
+
+            4. party_join_date: 入党时间（格式：YYYY-MM-DD）
+
+            5. work_start_date: 参加工作时间（格式：YYYY-MM-DD）
+
+            6. education: 最高学历，仅限以下值：博士/硕士/本科/大专/中专/高中及以下
+
+            7. degree: 最高学位，仅限以下值：博士/硕士/学士/无
+
+            8. position: 现任职务（如：副处长、科长）
+
+            9. department: 工作单位/部门
+
+            10. assessment_year: 考核年度（仅考核表需要，格式：YYYY）
+
+            11. assessment_result: 考核等次，仅限以下值：优秀/称职/基本称职/不称职
+
+
+
+            【铁律】：
+
+            - 输出必须是合法的 JSON 格式
+
+            - 找不到的字段输出 null，绝对不要编造
+
+            - 日期统一转为 YYYY-MM-DD 格式
+
+            - 如果材料中有多个日期，优先取最新或最完整的
+
+            - 材料来自 OCR，可能有错字、断行或乱码；仅依据文中可见信息提取，不确定则 null
+
+
+
+            输出示例：
+
+            {
+
+              "name": "张伟",
+
+              "id_card": "110101197801011234",
+
+              "birth_date": "1978-01-01",
+
+              "party_join_date": "2002-07-01",
+
+              "work_start_date": "1996-08-01",
+
+              "education": "硕士",
+
+              "degree": "硕士",
+
+              "position": "副处长",
+
+              "department": "发改委",
+
+              "assessment_year": null,
+
+              "assessment_result": null
+
+            }'
+        - id: da163771-c34e-4259-b3bb-eb9dc7d077a6
+          role: user
+          text: '{{#context#}}
+
+            材料类型：{{#1782467008981.text#}}'
+        selected: false
+        structured_output_enabled: false
+        title: LLM -Field_Extractor
+        type: llm
+        vision:
+          enabled: false
+      height: 86
+      id: '1782467490725'
+      position:
+        x: 667.9242148968024
+        y: 312.7584867929258
+      positionAbsolute:
+        x: 667.9242148968024
+        y: 312.7584867929258
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        code: "import json\nimport re\n\ndef main(raw_json) -> dict:\n    data = {}\n\
+          \    if isinstance(raw_json, dict):\n        data = raw_json\n    elif isinstance(raw_json,\
+          \ str) and raw_json.strip():\n        # 清洗 <think> 标签（兼容 DeepSeek-R1 等推理模型）\n\
+          \        cleaned = re.sub(r'<think>.*?</think>', '', str(raw_json), flags=re.DOTALL).strip()\n\
+          \        try:\n            data = json.loads(cleaned)\n        except Exception:\n\
+          \            data = {}\n\n    result = {\n        \"name\": data.get(\"\
+          name\") or \"\",\n        \"id_card\": data.get(\"id_card\") or \"\",\n\
+          \        \"birth_date\": normalize_date(data.get(\"birth_date\")),\n   \
+          \     \"party_join_date\": normalize_date(data.get(\"party_join_date\")),\n\
+          \        \"work_start_date\": normalize_date(data.get(\"work_start_date\"\
+          )),\n        \"education\": normalize_education(data.get(\"education\")),\n\
+          \        \"degree\": normalize_degree(data.get(\"degree\")),\n        \"\
+          position\": data.get(\"position\") or \"\",\n        \"department\": data.get(\"\
+          department\") or \"\",\n        \"assessment_year\": normalize_year(data.get(\"\
+          assessment_year\")),\n        \"assessment_result\": normalize_assessment(data.get(\"\
+          assessment_result\")),\n    }\n    return {\"normalized\": result}\n\n\n\
+          def normalize_date(val):\n    if not val:\n        return \"\"\n    match\
+          \ = re.search(r\"(\\d{4})[-/.](\\d{1,2})[-/.](\\d{1,2})\", str(val))\n \
+          \   if match:\n        return f\"{match.group(1)}-{match.group(2).zfill(2)}-{match.group(3).zfill(2)}\"\
+          \n    match = re.search(r\"(\\d{4})年(\\d{1,2})月(\\d{1,2})日\", str(val))\n\
+          \    if match:\n        return f\"{match.group(1)}-{match.group(2).zfill(2)}-{match.group(3).zfill(2)}\"\
+          \n    match = re.search(r\"(\\d{4})年(\\d{1,2})月\", str(val))\n    if match:\n\
+          \        return f\"{match.group(1)}-{match.group(2).zfill(2)}-01\"\n   \
+          \ return str(val)\n\n\ndef normalize_education(val):\n    if not val:\n\
+          \        return \"\"\n    edu_map = {\n        \"博士\": \"博士\",\n       \
+          \ \"博士后\": \"博士\",\n        \"硕士\": \"硕士\",\n        \"研究生\": \"硕士\",\n\
+          \        \"本科\": \"本科\",\n        \"大学\": \"本科\",\n        \"大专\": \"大专\"\
+          ,\n        \"专科\": \"大专\",\n        \"中专\": \"中专\",\n        \"高中\": \"\
+          高中及以下\",\n    }\n    for key in edu_map:\n        if key in str(val):\n\
+          \            return edu_map[key]\n    return str(val)\n\n\ndef normalize_degree(val):\n\
+          \    if not val:\n        return \"\"\n    s = str(val)\n    if \"博士\" in\
+          \ s:\n        return \"博士\"\n    if \"硕士\" in s:\n        return \"硕士\"\n\
+          \    if \"学士\" in s:\n        return \"学士\"\n    return \"无\"\n\n\ndef normalize_year(val):\n\
+          \    if not val:\n        return \"\"\n    match = re.search(r\"(\\d{4})\"\
+          , str(val))\n    return match.group(1) if match else \"\"\n\n\ndef normalize_assessment(val):\n\
+          \    if not val:\n        return \"\"\n    val = str(val)\n    if \"优秀\"\
+          \ in val:\n        return \"优秀\"\n    if \"称职\" in val and \"基本\" not in\
+          \ val:\n        return \"称职\"\n    if \"基本称职\" in val:\n        return \"\
+          基本称职\"\n    if \"不称职\" in val:\n        return \"不称职\"\n    return val"
+        code_language: python3
+        outputs:
+          normalized:
+            children: null
+            type: object
+        selected: false
+        title: Normalize_Fields
+        type: code
+        variables:
+        - value_selector:
+          - '1782467490725'
+          - text
+          value_type: string
+          variable: raw_json
+      height: 50
+      id: '1782468636243'
+      position:
+        x: 1009.9658418001412
+        y: 312.7584867929258
+      positionAbsolute:
+        x: 1009.9658418001412
+        y: 312.7584867929258
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        code: "import json\n\ndef main(material_type: str, normalized: dict) -> dict:\n\
+          \    n = normalized or {}\n    lines = [\n        \"=\" * 50,\n        \"\
+          档案材料 AI 提取结果\",\n        \"=\" * 50,\n        \"\",\n        f\"材料类型：{material_type\
+          \ or '未知'}\",\n        \"\",\n        \"结构化字段：\",\n        f\"  姓名：{n.get('name')\
+          \ or '—'}\",\n        f\"  身份证号：{n.get('id_card') or '—'}\",\n        f\"\
+          \  出生日期：{n.get('birth_date') or '—'}\",\n        f\"  入党时间：{n.get('party_join_date')\
+          \ or '—'}\",\n        f\"  参加工作时间：{n.get('work_start_date') or '—'}\",\n\
+          \        f\"  最高学历：{n.get('education') or '—'}\",\n        f\"  最高学位：{n.get('degree')\
+          \ or '—'}\",\n        f\"  现任职务：{n.get('position') or '—'}\",\n        f\"\
+          \  工作单位：{n.get('department') or '—'}\",\n        f\"  考核年度：{n.get('assessment_year')\
+          \ or '—'}\",\n        f\"  考核等次：{n.get('assessment_result') or '—'}\",\n\
+          \        \"\",\n        \"JSON（便于对接系统）：\",\n        json.dumps(n, ensure_ascii=False,\
+          \ indent=2),\n        \"\",\n        \"=\" * 50,\n    ]\n    return {\"\
+          report\": \"\\n\".join(lines)}"
+        code_language: python3
+        outputs:
+          report:
+            children: null
+            type: string
+        selected: false
+        title: Format_Report
+        type: code
+        variables:
+        - value_selector:
+          - '1782467008981'
+          - text
+          value_type: string
+          variable: material_type
+        - value_selector:
+          - '1782468636243'
+          - normalized
+          value_type: object
+          variable: normalized
+      height: 50
+      id: '1782468735555'
+      position:
+        x: 1009.9658418001412
+        y: 394.33417010502995
+      positionAbsolute:
+        x: 1009.9658418001412
+        y: 394.33417010502995
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        outputs:
+        - value_selector:
+          - '1782468735555'
+          - report
+          value_type: string
+          variable: res
+        selected: false
+        title: 输出
+        type: end
+      height: 87
+      id: '1782468875820'
+      position:
+        x: 1009.9658418001412
+        y: 490.9493928912158
+      positionAbsolute:
+        x: 1009.9658418001412
+        y: 490.9493928912158
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        isInIteration: false
+        isInLoop: false
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-v4-flash
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: 7dbfe1ce-c37e-496e-b55b-8006152dc649
+          role: system
+          text: '你是一个路由助手。根据用户问题，识别属于以下哪种档案审核场景，只输出场景编号。
+
+
+            ## 场景列表
+
+            1. 干部选拔任用 — 关键词：选拔、提拔、任职资格、三龄两历、处分期
+
+            2. 新进人员入职 — 关键词：入职、进入来源、招录、调任、转业、干部身份认定
+
+            3. 干部档案转递 — 关键词：转递、移交、密封章、交接签字、目录清单
+
+            4. 专项审核集中整治 — 关键词：专项审核、集中整治、涂改、造假、最早材料
+
+            5. 日常材料归档 — 关键词：归档、日常材料、时效、印章、签名
+
+            6. 材料录入-关键词：录入、个人材料
+
+            7. 其他，闲聊，没有以上关键词
+
+
+            ## 输出
+
+            只输出一个数字（1-7），不要其他文字。
+
+            '
+        - id: 8ae31a40-b01f-4cbf-8f92-ecf6f6360468
+          role: user
+          text: '{{#1782466874781.user_question#}}'
+        selected: false
+        title: LLM-场景识别
+        type: llm
+        vision:
+          enabled: false
+      height: 86
+      id: '17826487202500'
+      position:
+        x: -26.99999889482939
+        y: 479.300589084816
+      positionAbsolute:
+        x: -26.99999889482939
+        y: 479.300589084816
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: contains
+            id: 9ea74a0e-a608-4280-b00a-18ffa8e71b0f
+            value: '6'
+            varType: string
+            variable_selector:
+            - '17826487202500'
+            - text
+          id: 'true'
+          logical_operator: and
+        - case_id: db4f0a84-795a-490d-92d0-c1f38e9953e4
+          conditions:
+          - comparison_operator: contains
+            id: 34cccfdf-6c7c-447a-b4d4-9ab4c39a4ebf
+            value: '7'
+            varType: string
+            variable_selector:
+            - '17826487202500'
+            - text
+          id: db4f0a84-795a-490d-92d0-c1f38e9953e4
+          logical_operator: and
+        desc: ''
+        isInIteration: false
+        isInLoop: false
+        selected: false
+        title: 条件分支
+        type: if-else
+      height: 170
+      id: '17826487290260'
+      position:
+        x: -26.99999889482939
+        y: 623.5503702120031
+      positionAbsolute:
+        x: -26.99999889482939
+        y: 623.5503702120031
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        outputs:
+        - value_selector:
+          - '17826487202500'
+          - text
+          value_type: string
+          variable: res
+        selected: false
+        title: 输出 2
+        type: end
+      height: 87
+      id: '1782648962817'
+      position:
+        x: -26.99999889482939
+        y: 872.4519533334242
+      positionAbsolute:
+        x: -26.99999889482939
+        y: 872.4519533334242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        code: "\ndef main(scenario: str) -> dict:\n    # 5 套审核标准（精简版，完整版之前已逐套给出）\n\
+          \    prompts = {\n        \"1\": {\n            \"name\": \"干部选拔任用\",\n\
+          \            \"prompt\": \"\"\"## 审核标准：干部选拔任用\n\n### 三龄两历一身份\n从最早原始材料逐一核对出生时间、参加工作时间、入党时间，交叉比对多份材料是否一致。\n\
+          不一致时分析是否得利（如改大年龄提前上学/入党，改小年龄延长任期）。\n核查全日制及在职学历学位、主要工作经历、干部身份（公务员/参公/事业/国企）。\n\
+          \n### 任职资格条件\n现职级及任职年限，对照选拔任用条例判断是否达到提拔要求。\n查阅第八类材料，排查是否在处分影响期内或有违纪违法问题。\n\
+          \n### 档案真实性\n逐份检查关键字段涂改痕迹。比对不同材料间出生日期/学历/工作时间是否矛盾。\n勾选关键材料：□任免审批表 □公务员登记表\
+          \ □入党志愿书 □干部履历表 □学历学位证书 □近3年考核表\n\n### 专项审核状态\n是否有专审认定表，认定信息与现任职务是否一致。\"\
+          \"\"},\n        \"2\": {\n            \"name\": \"新进人员入职\",\n          \
+          \  \"prompt\": \"\"\"## 审核标准：新进人员入职\n\n### 进入来源材料\n依据进入方式（招录/调任/转业/招聘）核查对应材料是否齐全、印章完整、审批链清晰。\n\
+          \n### 干部身份认定\n依据进入时间节点的政策（统招统分/转干/聘用制/公务员制度），判断身份认定是否有效。\n\n### 三龄两历原始依据\n\
+          出生时间最早记载→入团志愿书、初中毕业生登记表。\n参加工作时间最早证明→招工表、入伍通知书。\n入党时间→入党志愿书原件。\n学历学位→各阶段报考表、成绩单、毕业生登记表、学位证书全套。\n\
+          \n### 档案完整性\n缺失材料是否已补充或说明。\"\"\"},\n        \"3\": {\n            \"name\"\
+          : \"干部档案转递\",\n            \"prompt\": \"\"\"## 审核标准：干部档案转递\n\n### 分类与完整\n\
+          十大分类是否合理，有无非档案材料（私人信件、笔记本、草稿）混入。\n\n### 转递手续\n转递通知单、目录清单、密封章、交接签字、转递登记簿、回执单，六项是否完备。\n\
+          \n### 三龄两历一致性\n转出前认定结果与档案记载是否一致，不一致是否有情况说明。\n\n### 涉密违禁排查\n有无私人信件、笔记本、涉密文件混入。\"\
+          \"\"},\n        \"4\": {\n            \"name\": \"专项审核集中整治\",\n        \
+          \    \"prompt\": \"\"\"## 审核标准：专项审核集中整治\n\n### 最早依据原则\n三龄认定必须以最早原始材料为准。逐项追溯到第一次记载，比对后续变化。\n\
+          \n### 涂改与造假\n检查出生日期、工作时间关键字段是否有刮擦/涂改液/重描痕迹。\n得利分析：改动是否对当事人有利（提前上学、延长任期）。\n\
+          排查套读学历、冒名证书、伪造证件。\n\n### 缺失补全\n列出缺失清单及重要程度（★★★关键/★★重要/★一般），给出补全渠道和替代方案。\n\
+          \n### 违规违纪\n\U0001F534严重（伪造/冒名）、\U0001F7E0较重（多处涂改得利/套读）、\U0001F7E1一般，形成问题线索和处置建议。\"\
+          \"\"},\n        \"5\": {\n            \"name\": \"日常材料归档\",\n          \
+          \  \"prompt\": \"\"\"## 审核标准：日常材料归档\n\n### 真实性\n印章、签名、日期是否齐全真实。有无伪造或涂改痕迹。\n\
+          \n### 规范性与时效性\n格式是否符合要求（A4纸），是否在材料形成后1年内归档。\n\n### 逻辑一致性\n新材料关键时间与已认定档案信息是否一致。不一致需核查是新认定还是错误。\n\
+          \n### 重复材料\n与已有归档材料是否重复，非归档范围材料不得归入。\"\"\"},\n    }\n\n    info = prompts.get(scenario.strip(),\
+          \ prompts[\"1\"])\n\n    return {\n        \"audit_prompt\": info[\"prompt\"\
+          ],\n        \"scenario_name\": info[\"name\"],\n    }\n\n"
+        code_language: python3
+        desc: ''
+        isInIteration: false
+        isInLoop: false
+        outputs:
+          audit_prompt:
+            children: null
+            type: string
+          scenario_name:
+            children: null
+            type: string
+        selected: false
+        title: 代码执行-相关提示词
+        type: code
+        variables:
+        - value_selector:
+          - '17826487202500'
+          - text
+          value_type: string
+          variable: scenario
+      height: 50
+      id: '17826490256770'
+      position:
+        x: 343.510004692509
+        y: 490.9493928912158
+      positionAbsolute:
+        x: 343.510004692509
+        y: 490.9493928912158
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        code: "from datetime import date\ndef main():\n    today = date.today().isoformat()\n\
+          \    return {\n        \"current_date\": today,\n    }\n"
+        code_language: python3
+        desc: ''
+        isInIteration: false
+        isInLoop: false
+        outputs:
+          current_date:
+            children: null
+            type: string
+        selected: false
+        title: 代码执行-工具
+        type: code
+        variables: []
+      height: 50
+      id: '17826490351930'
+      position:
+        x: 343.510004692509
+        y: 574.0528962958116
+      positionAbsolute:
+        x: 343.510004692509
+        y: 574.0528962958116
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1782466874781'
+          - ocr_text
+        desc: ''
+        isInIteration: false
+        isInLoop: false
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-v4-flash
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: 0ad33589-cd3c-4b8c-b710-0667173a5c0e
+          role: system
+          text: '你是干部人事档案审核专家。请严格按照以下审核标准，对提供的档案材料 OCR 识别结果进行审核。
+
+
+
+            ##工具列表
+
+
+            ## 输出要求
+
+            生成完整审核报告。包含：基本信息、逐项核查结果（表格）、问题汇总（按严重程度）、综合结论。
+
+            如发现涂改、缺失、矛盾、造假嫌疑，必须重点标注。
+
+            '
+        - id: d413216f-d9e7-45de-9c2b-a0246bad0472
+          role: user
+          text: '问题：{{#sys.query#}}
+
+            当前时间：{{#17826490351930.current_date#}}
+
+            {{#context#}}'
+        selected: false
+        title: LLM-审核分析
+        type: llm
+        vision:
+          enabled: false
+      height: 86
+      id: '17826490439520'
+      position:
+        x: 343.510004692509
+        y: 661.7341358044939
+      positionAbsolute:
+        x: 343.510004692509
+        y: 661.7341358044939
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        outputs:
+        - value_selector:
+          - '17826490439520'
+          - text
+          value_type: string
+          variable: res
+        selected: false
+        title: 输出 3
+        type: end
+      height: 87
+      id: '1782649057449'
+      position:
+        x: 343.510004692509
+        y: 787.5991409056671
+      positionAbsolute:
+        x: 343.510004692509
+        y: 787.5991409056671
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    viewport:
+      x: 94.63992497883862
+      y: 33.08720423056752
+      zoom: 0.7071067921417857
+  rag_pipeline_variables: []

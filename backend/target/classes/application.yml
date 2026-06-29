@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: checking-agent
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 200MB
+  mvc:
+    async:
+      request-timeout: 300000   # 5分钟，Dify 审核需要时间
+
+server:
+  port: 8088
+
+dify:
+  api-url: http://localhost/v1
+  api-key: app-iREFVzOhoFMctoWM3g7qZP0g
+  material-entry-api-key: app-fGkhDuZl5gElLkZcHhJj5Gm1
+
+ocr:
+  api-url: http://localhost:8866

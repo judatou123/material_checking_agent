@@ -320,9 +320,7 @@ workflow:
         prompt_template:
         - id: 058e0afe-986c-435c-8ed5-72a44d899399
           role: system
-          text: '
-
-            你是一名干部人事档案审核专家。请从以下材料中提取关键信息，严格按照 JSON 格式输出。
+          text: '你是一名干部人事档案审核专家。请从以下材料中提取关键信息，严格按照 JSON 格式输出。
 
 
 
@@ -354,7 +352,9 @@ workflow:
 
             【铁律】：
 
-            - 输出必须是合法的 JSON 格式
+            - ★ 直接输出纯 JSON 对象，不要用 ```json ``` 代码块包裹，不要输出数组
+
+            - ★ 本次材料只包含一个人，提取一个 JSON 对象即可
 
             - 找不到的字段输出 null，绝对不要编造
 
@@ -418,25 +418,32 @@ workflow:
       type: custom
       width: 241
     - data:
-        code: "import json\nimport re\n\ndef main(raw_json) -> dict:\n    data = {}\n\
-          \    if isinstance(raw_json, dict):\n        data = raw_json\n    elif isinstance(raw_json,\
-          \ str) and raw_json.strip():\n        # 清洗 <think> 标签（兼容 DeepSeek-R1 等推理模型）\n\
+        code: "import json\nimport re\n\ndef main(raw_json) -> dict:\n    # 解析输入 →\
+          \ 拿到单个 dict\n    data = {}\n    if isinstance(raw_json, dict):\n       \
+          \ data = raw_json\n    elif isinstance(raw_json, list) and raw_json:\n \
+          \       # 兼容：LLM 不听话输出了数组，取第一个\n        data = raw_json[0] if isinstance(raw_json[0],\
+          \ dict) else {}\n    elif isinstance(raw_json, str) and raw_json.strip():\n\
           \        cleaned = re.sub(r'<think>.*?</think>', '', str(raw_json), flags=re.DOTALL).strip()\n\
-          \        try:\n            data = json.loads(cleaned)\n        except Exception:\n\
-          \            data = {}\n\n    result = {\n        \"name\": data.get(\"\
-          name\") or \"\",\n        \"id_card\": data.get(\"id_card\") or \"\",\n\
-          \        \"birth_date\": normalize_date(data.get(\"birth_date\")),\n   \
-          \     \"party_join_date\": normalize_date(data.get(\"party_join_date\")),\n\
-          \        \"work_start_date\": normalize_date(data.get(\"work_start_date\"\
-          )),\n        \"education\": normalize_education(data.get(\"education\")),\n\
-          \        \"degree\": normalize_degree(data.get(\"degree\")),\n        \"\
-          position\": data.get(\"position\") or \"\",\n        \"department\": data.get(\"\
-          department\") or \"\",\n        \"assessment_year\": normalize_year(data.get(\"\
-          assessment_year\")),\n        \"assessment_result\": normalize_assessment(data.get(\"\
-          assessment_result\")),\n    }\n    return {\"normalized\": result}\n\n\n\
-          def normalize_date(val):\n    if not val:\n        return \"\"\n    match\
-          \ = re.search(r\"(\\d{4})[-/.](\\d{1,2})[-/.](\\d{1,2})\", str(val))\n \
-          \   if match:\n        return f\"{match.group(1)}-{match.group(2).zfill(2)}-{match.group(3).zfill(2)}\"\
+          \        # 去掉 LLM 可能输出的 markdown 代码块包裹 ```json ... ```\n        cleaned\
+          \ = re.sub(r'^```(?:json)?\\s*\\n?', '', cleaned, flags=re.MULTILINE)\n\
+          \        cleaned = re.sub(r'\\n?```\\s*$', '', cleaned)\n        try:\n\
+          \            parsed = json.loads(cleaned)\n            if isinstance(parsed,\
+          \ dict):\n                data = parsed\n            elif isinstance(parsed,\
+          \ list) and parsed:\n                data = parsed[0] if isinstance(parsed[0],\
+          \ dict) else {}\n        except Exception:\n            data = {}\n\n  \
+          \  # 标准化\n    result = {\n        \"name\": data.get(\"name\") or \"\",\n\
+          \        \"id_card\": data.get(\"id_card\") or \"\",\n        \"birth_date\"\
+          : normalize_date(data.get(\"birth_date\")),\n        \"party_join_date\"\
+          : normalize_date(data.get(\"party_join_date\")),\n        \"work_start_date\"\
+          : normalize_date(data.get(\"work_start_date\")),\n        \"education\"\
+          : normalize_education(data.get(\"education\")),\n        \"degree\": normalize_degree(data.get(\"\
+          degree\")),\n        \"position\": data.get(\"position\") or \"\",\n   \
+          \     \"department\": data.get(\"department\") or \"\",\n        \"assessment_year\"\
+          : normalize_year(data.get(\"assessment_year\")),\n        \"assessment_result\"\
+          : normalize_assessment(data.get(\"assessment_result\")),\n    }\n    return\
+          \ {\"normalized\": result}\n\n\ndef normalize_date(val):\n    if not val:\n\
+          \        return \"\"\n    match = re.search(r\"(\\d{4})[-/.](\\d{1,2})[-/.](\\\
+          d{1,2})\", str(val))\n    if match:\n        return f\"{match.group(1)}-{match.group(2).zfill(2)}-{match.group(3).zfill(2)}\"\
           \n    match = re.search(r\"(\\d{4})年(\\d{1,2})月(\\d{1,2})日\", str(val))\n\
           \    if match:\n        return f\"{match.group(1)}-{match.group(2).zfill(2)}-{match.group(3).zfill(2)}\"\
           \n    match = re.search(r\"(\\d{4})年(\\d{1,2})月\", str(val))\n    if match:\n\
@@ -485,20 +492,27 @@ workflow:
       type: custom
       width: 241
     - data:
-        code: "import json\n\ndef main(material_type: str, normalized: dict) -> dict:\n\
-          \    n = normalized or {}\n    lines = [\n        \"=\" * 50,\n        \"\
-          档案材料 AI 提取结果\",\n        \"=\" * 50,\n        \"\",\n        f\"材料类型：{material_type\
-          \ or '未知'}\",\n        \"\",\n        \"结构化字段：\",\n        f\"  姓名：{n.get('name')\
-          \ or '—'}\",\n        f\"  身份证号：{n.get('id_card') or '—'}\",\n        f\"\
-          \  出生日期：{n.get('birth_date') or '—'}\",\n        f\"  入党时间：{n.get('party_join_date')\
-          \ or '—'}\",\n        f\"  参加工作时间：{n.get('work_start_date') or '—'}\",\n\
-          \        f\"  最高学历：{n.get('education') or '—'}\",\n        f\"  最高学位：{n.get('degree')\
-          \ or '—'}\",\n        f\"  现任职务：{n.get('position') or '—'}\",\n        f\"\
-          \  工作单位：{n.get('department') or '—'}\",\n        f\"  考核年度：{n.get('assessment_year')\
-          \ or '—'}\",\n        f\"  考核等次：{n.get('assessment_result') or '—'}\",\n\
-          \        \"\",\n        \"JSON（便于对接系统）：\",\n        json.dumps(n, ensure_ascii=False,\
-          \ indent=2),\n        \"\",\n        \"=\" * 50,\n    ]\n    return {\"\
-          report\": \"\\n\".join(lines)}"
+        code: "import json\n\ndef main(material_type: str, normalized) -> dict:\n\
+          \    # 兼容：Dify 有时将 object 序列化为 JSON 字符串\n    person = normalized\n    if\
+          \ isinstance(person, str) and person.strip():\n        try:\n          \
+          \  person = json.loads(person)\n        except Exception:\n            person\
+          \ = {}\n\n    # 兼容旧格式 {\"people\": [{...}]}\n    if isinstance(person, dict)\
+          \ and \"people\" in person:\n        people_list = person.get(\"people\"\
+          , [])\n        person = people_list[0] if people_list else {}\n\n    if\
+          \ not isinstance(person, dict):\n        person = {}\n\n    lines = [\n\
+          \        \"=\" * 50,\n        \"档案材料 AI 提取结果\",\n        \"=\" * 50,\n \
+          \       \"\",\n        f\"材料类型：{material_type or '未知'}\",\n        \"\"\
+          ,\n        \"结构化字段：\",\n        f\"  姓名：{person.get('name') or '—'}\",\n\
+          \        f\"  身份证号：{person.get('id_card') or '—'}\",\n        f\"  出生日期：{person.get('birth_date')\
+          \ or '—'}\",\n        f\"  入党时间：{person.get('party_join_date') or '—'}\"\
+          ,\n        f\"  参加工作时间：{person.get('work_start_date') or '—'}\",\n     \
+          \   f\"  最高学历：{person.get('education') or '—'}\",\n        f\"  最高学位：{person.get('degree')\
+          \ or '—'}\",\n        f\"  现任职务：{person.get('position') or '—'}\",\n   \
+          \     f\"  工作单位：{person.get('department') or '—'}\",\n        f\"  考核年度：{person.get('assessment_year')\
+          \ or '—'}\",\n        f\"  考核等次：{person.get('assessment_result') or '—'}\"\
+          ,\n        \"\",\n        \"JSON（便于对接系统）：\",\n        json.dumps(person,\
+          \ ensure_ascii=False, indent=2),\n        \"\",\n        \"=\" * 50,\n \
+          \   ]\n    return {\"report\": \"\\n\".join(lines)}"
         code_language: python3
         outputs:
           report:
@@ -851,7 +865,7 @@ workflow:
       type: custom
       width: 241
     viewport:
-      x: 94.63992497883862
-      y: 33.08720423056752
-      zoom: 0.7071067921417857
+      x: 85.4387201751947
+      y: -46.745012885687174
+      zoom: 0.8250194398995427
   rag_pipeline_variables: []
